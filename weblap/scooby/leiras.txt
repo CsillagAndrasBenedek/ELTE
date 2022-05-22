@@ -1,0 +1,1 @@
+Több lapból álló weblap: html, css fájlok írása + előre megírt javascript felhasználása.
