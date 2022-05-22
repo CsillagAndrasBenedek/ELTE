@@ -1,0 +1,38 @@
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\bin\Debug\net5.0-windows\SquaresGame.exe
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\bin\Debug\net5.0-windows\SquaresGame.deps.json
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\bin\Debug\net5.0-windows\SquaresGame.runtimeconfig.json
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\bin\Debug\net5.0-windows\SquaresGame.runtimeconfig.dev.json
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\bin\Debug\net5.0-windows\SquaresGame.dll
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\bin\Debug\net5.0-windows\ref\SquaresGame.dll
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\bin\Debug\net5.0-windows\SquaresGame.pdb
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.csproj.AssemblyReference.cache
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.View.SquaresWindow.resources
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.csproj.GenerateResource.cache
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.AssemblyInfoInputs.cache
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.AssemblyInfo.cs
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.csproj.CoreCompileInputs.cache
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.dll
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\ref\SquaresGame.dll
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.pdb
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.genruntimeconfig.cache
+C:\Users\Andris\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.Properties.Resources.resources
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\bin\Debug\net5.0-windows\SquaresGame.exe
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\bin\Debug\net5.0-windows\SquaresGame.deps.json
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\bin\Debug\net5.0-windows\SquaresGame.runtimeconfig.json
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\bin\Debug\net5.0-windows\SquaresGame.runtimeconfig.dev.json
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\bin\Debug\net5.0-windows\SquaresGame.dll
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\bin\Debug\net5.0-windows\ref\SquaresGame.dll
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\bin\Debug\net5.0-windows\SquaresGame.pdb
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.csproj.AssemblyReference.cache
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.Properties.Resources.resources
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.View.SquaresWindow.resources
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.csproj.GenerateResource.cache
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.AssemblyInfoInputs.cache
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.AssemblyInfo.cs
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.csproj.CoreCompileInputs.cache
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.dll
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\ref\SquaresGame.dll
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.pdb
+C:\Users\Andris\OneDrive - Eotvos Lorand Tudomanyegyetem\felev3\EVA\source\repos\SquaresGame\SquaresGame\obj\Debug\net5.0-windows\SquaresGame.genruntimeconfig.cache

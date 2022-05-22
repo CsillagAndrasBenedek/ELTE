@@ -1,0 +1,21 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "fc66fba4-0436-480d-9dc8-ec0c59a904b2": {
+      "ProjectGuid": "fc66fba4-0436-480d-9dc8-ec0c59a904b2",
+      "DisplayName": "SquaresGameWpf",
+      "ColorIndex": 0
+    },
+    "8df8bc9e-6070-432e-8320-0a96ced3f7ea": {
+      "ProjectGuid": "8df8bc9e-6070-432e-8320-0a96ced3f7ea",
+      "DisplayName": "TestSquaresGame",
+      "ColorIndex": 1
+    },
+    "a8c2bb68-a5d3-4fb5-ae26-f5cc03d415f2": {
+      "ProjectGuid": "a8c2bb68-a5d3-4fb5-ae26-f5cc03d415f2",
+      "DisplayName": "TestSquaresGameWpf",
+      "ColorIndex": 2
+    }
+  },
+  "NextColorIndex": 3
+}

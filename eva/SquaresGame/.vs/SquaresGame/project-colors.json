@@ -1,0 +1,16 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "89fc9026-cf19-4f4f-a715-c54adbbf675c": {
+      "ProjectGuid": "89fc9026-cf19-4f4f-a715-c54adbbf675c",
+      "DisplayName": "TestSquaresGame",
+      "ColorIndex": 0
+    },
+    "2306c032-8773-419e-aca6-b34bde9012f8": {
+      "ProjectGuid": "2306c032-8773-419e-aca6-b34bde9012f8",
+      "DisplayName": "SquaresGame",
+      "ColorIndex": 1
+    }
+  },
+  "NextColorIndex": 2
+}

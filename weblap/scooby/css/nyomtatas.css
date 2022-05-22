@@ -1,0 +1,340 @@
+/*betűtípusok importálása*/
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
+
+body{
+    font-family: 'Open Sans', sans-serif;
+    background-color: white;
+    margin: 0px;
+    text-align: left;
+}
+
+
+/*címsorok*/
+
+h1{
+    text-align: left;
+    font-style: italic;
+    font-size: 2.5em;
+    padding-top: 20px;
+}
+
+
+h2{
+    font-size: 2em;
+    font-style: italic;
+}
+
+h3{
+    font-size: 1.4em;
+    font-family: 'Audiowide', cursive;
+}
+
+h1, h2{
+    font-family: 'Audiowide', cursive;
+}
+
+aside h3{
+    font-size: 1.2em;;
+}
+
+/*oldalelemek alapeset*/
+.a header, .a main, .a footer, .a #main{
+    background-color: white;
+    color: black;
+    overflow: hidden;
+    margin: auto; 
+    padding: 10px;
+    width: 70%;
+    min-width: 400px;
+    max-width: 1000px;
+}
+
+/*oldalelemek italok*/
+ #oldalmenu, aside,  #italok main, #italok header, #italok footer {
+    border: 2px solid black ;
+    background-color: white;
+    color: black;
+    overflow: hidden; 
+    padding: 0 10px;
+  }
+  
+  .thelogo {
+    width: 10%;
+    min-width: 80px;
+    margin: 0;
+}
+
+  #italok header{
+      margin: 0px 20px 0px 20px;
+  }
+
+  #italok footer{
+      margin: 0px 20px 0px 20px;
+  }
+
+  #oldalmenu{
+    margin: 0px 0px 0px 20px;
+}
+
+aside{
+    margin: 0px 20px 0px 0px;
+}
+ 
+/*header*/
+
+header img {
+    border-radius: 100px;
+    float: left;
+    padding: 0 10px;
+    width: 20%;
+
+}
+
+header nav{
+    text-align: right;
+    background-color: white;
+    margin-left: -10px;
+    margin-right: -10px;
+
+}
+
+header nav ul
+{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+
+header nav ul li {
+    display: inline-block;
+    white-space: nowrap;
+    padding: 10px;
+    
+}
+
+header nav ul li a {
+    text-decoration: none;
+}
+
+header nav ul li#aktualis {
+    background-color:gold;
+    font-weight: bold;
+}
+
+header nav a:hover {text-decoration: underline; font-size: 1.3em;}
+
+/*rejtve*/
+.rejtett a{position: absolute; left: -9999px}
+.rejtett a:focus{position: static; background: white; }
+
+/*footer*/
+.a footer{
+    border-top: 1px solid black;
+}
+
+/*main*/
+main article p{
+    text-align: justify;
+}
+
+main article figure.jobb{
+    float: right;
+    margin: 0 5px;
+    
+}
+
+main article figure.bal {
+    float: left;
+    margin: 0 5px;
+}
+
+main article figcaption{
+    text-align: center;
+}
+
+main article {
+    padding: 35px 0;
+}
+
+main article:first-of-type{
+    padding: 0 0 35px 0;
+}
+
+article#salata{
+    padding: 0 0 20px 0;
+}
+
+
+/*video*/
+video{
+    width: 100%;
+}
+
+main article.vid p{
+    font-style: italic;
+}
+
+main article.vid{
+    padding: 0;
+    overflow: auto;
+}
+
+/*táblázat*/
+
+table {
+    caption-side: top;
+    border: 5px solid black;
+    border-collapse: collapse;
+    text-align: center;
+    font-size: 1.3em;
+}
+
+table td, th {
+    border: 3px solid black;
+    padding: 5px;
+}
+
+table th {
+    background-color: white;
+    color: black;
+    font-weight: bold;
+}
+
+table td{
+    background-color: white;
+    color: black;
+    font-weight: bold;
+}
+
+table caption{
+    text-align: left;
+}
+
+  .egyseges{
+      text-align: left;
+  }
+
+  #sali {
+    list-style-type: square;
+  }
+
+  #pg{
+      text-align: left;
+  }
+
+  #fontos {
+      color: black;
+      background-color: white;
+      font-size: 1.5em;
+      text-align: center;
+      font-weight: bold;
+  }
+
+  body#szallito {
+      background-image: url('../media/here_we_go.jpg') ;
+      
+  }
+
+  
+div{
+    font-size: 1.2em;
+}
+
+
+#idk p{
+    color: black;
+}
+
+
+
+
+  /*** Responsive Layout - itallap ***/
+
+  #oldalmenu ul{list-style-type: none;
+    margin: 0;
+    padding: 30px 0 0 0;
+  }
+
+  #oldalmenu ul li{
+      background-color: white;
+      margin: 0;
+      border: 1px solid black;
+      text-align: center;
+  }
+
+  #oldalmenu ul li a{
+      background-color: white;
+      display: block;
+      width: 150px;
+      height: 50px;
+      text-decoration: none;
+}
+
+#oldalmenu a:hover {text-decoration: underline; font-size: 1.3em;}
+  
+  
+
+  #italok header {grid-area: fejlec;}
+  #italok nav#oldalmenu {grid-area: menu;}
+  #italok aside {grid-area: oldalsav;}
+  #italok main {grid-area: fo;}
+  #italok footer {grid-area: lablec;}
+
+    #oldalmenu, aside,  #italok main, #italok header, #italok footer {
+        margin: 0px;
+      }  
+
+	body#italok{
+		grid-template-columns: 200px 2fr 1fr;
+	grid-template-areas:
+	'fejlec fejlec'
+	'fo fo'
+	'oldalsav oldalsav'
+	'lablec lablec';
+	}
+
+
+/*** Responsive Images ***/
+
+
+#italok figure img {width: 100%;}
+#italok figure {margin: 0px;}
+#italok figcaption {text-align: center;}
+
+.a main img{
+    width: 100%;
+}
+
+/*stílus csere*/
+#activate-normal{
+    display: none;
+}
+
+#activate-high-contrast{
+    float: right;
+}
+
+section{
+    padding: 0 5px;
+}
+
+
+.figyelem{
+    font-weight: bold;
+    font-style: italic;
+}
+
+aside p{
+    font-size: 1.3em;
+}
+
+#italok article{
+    padding: 10px 0px;
+}
+
+footer, header, #activate-high-contrast , #switcher, .rejtett, .vid, figure, #oldalmenu{
+    display: none;
+}
+

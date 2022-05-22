@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/normal.css" title="normal">
+    <link rel="stylesheet" type="text/css" href="css/nyomtatas.css" media="print">
+    <title>Értékelés</title>
+</head>
+
+<body class="a">
+    <nav class="rejtett">
+        <a href="#tartalom">Ugrás a tartalomra</a>
+    </nav>
+    <header>
+        <img src="media/logo.jpg" alt="LOGO">
+        <h1 id="focim"><span lang="en">Scooby-Doo</span> Pizzéria</h1>
+        <div>
+            <a href="" id="activate-high-contrast"><img id="rofi" src="css/high-contrast.svg" alt="nagykontrasztú változat"></a>
+            <a href="" id="activate-normal">Vissza a normál változatra</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Bemutatkozás</a></li>
+                <li><a href="etlap.html">Étlap</a></li>
+                <li><a href="itallap.html">Itallap</a></li>
+                <li><a href="kapcsolat.html">Kapcsolat</a></li>
+                <li  id="aktualis"><a href="urlap.html">Értékelés</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="tartalom">
+        <h2>Értékelés</h2>
+        <p>
+            Ahogy azt már bemutatkozásunkban is írtuk, szeretnénk, ha minden vendégünk elégedetten távozna tőlünk, ennek
+            érdekében kérjük vásárlóink segítségét, hogy véleményükből tájékozódva és hibáinkat javítva fejlődhessünk,
+            mert
+            fejlődni mindig lehet!
+        </p>
+
+        <form action="mailto:scooby.dooby.doo@gmail.com " method="post" enctype="text/plain">
+            <fieldset>
+                <legend>Adataid</legend>
+                <label for="nev">Név: </label>
+                <input type="text" name="neved" id="nev" size="50" maxlength="100" required><br>
+                <label for="email">E-mail: </label>
+                <input type="text" name="e-mailed" id="email" size="47" maxlength="100" required><br>
+                <label for="hlevel">Szeretnék mindig értesülni a pizzériával kapcsolatos hírekről</label>
+                <input type="checkbox" name="hirlevel" id="hlevel">
+            </fieldset>
+
+            <fieldset>
+                <legend>Pontozás 5-ös skálán</legend>
+                Weboldalunk<br>
+                <input type="radio" name="oldalunnk" id="gomb1" value="w1"><label for="gomb1">1</label>
+                <input type="radio" name="oldalunnk" id="gomb2" value="w2"><label for="gomb2">2</label>
+                <input type="radio" name="oldalunnk" id="gomb3" value="w3" checked><label for="gomb3">3</label>
+                <input type="radio" name="oldalunnk" id="gomb4" value="w4"><label for="gomb4">4</label>
+                <input type="radio" name="oldalunnk" id="gomb5" value="w5"><label for="gomb5">5</label>
+                <br>Kiszállítás<br>
+                <input type="radio" name="szállitas" id="g1" value="k1"><label for="g1">1</label>
+                <input type="radio" name="szállitas" id="g2" value="k2"><label for="g2">2</label>
+                <input type="radio" name="szállitas" id="g3" value="k3" checked><label for="g3">3</label>
+                <input type="radio" name="szállitas" id="g4" value="k4"><label for="g4">4</label>
+                <input type="radio" name="szállitas" id="g5" value="k5"><label for="g5">5</label>
+                <br>Étel minősége<br>
+                <input type="radio" name="minoseg" id="go1" value="m1"><label for="go1">1</label>
+                <input type="radio" name="minoseg" id="go2" value="m2"><label for="go2">2</label>
+                <input type="radio" name="minoseg" id="go3" value="m3" checked><label for="go3">3</label>
+                <input type="radio" name="minoseg" id="go4" value="m4"><label for="go4">4</label>
+                <input type="radio" name="minoseg" id="go5" value="m5"><label for="go5">5</label>
+
+            </fieldset>
+
+            <fieldset>
+                <legend>Bővebb vélemény</legend>
+                <textarea name="velemenyed" id="velemeny" rows="10" cols="50"
+                    placeholder="Kérjük fejtsd ki vélemyényed bővebben, legyen az akár pozitív, akár negatív, de a trágár és sértő kifejezések elkerülése mellett!"></textarea><br>
+            </fieldset>
+
+            <fieldset>
+                <legend>Adatok elküldése</legend>
+                <input type="submit" value="Elküld">
+                <input type="reset" value="Töröl">
+            </fieldset>
+
+
+        </form>
+
+    </main>
+    <footer>
+        <p>Az oldal karbantartásáért felelős: <cite>Csillag András</cite></p>
+    </footer>
+    <script src="css/css-switch.js"></script>
+</body>
+
+</html>

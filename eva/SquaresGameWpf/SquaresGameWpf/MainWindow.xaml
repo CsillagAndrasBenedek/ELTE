@@ -1,0 +1,52 @@
+﻿<Window x:Class="SquaresGameWpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SquaresGameWpf"
+        mc:Ignorable="d"
+        Title="Squares Game" Height="520" Width="500">
+    
+    <Grid>
+        <DockPanel>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="New Game">
+                    <MenuItem Header="3x3" Command="{Binding StartNewGameCommand}" CommandParameter="5"></MenuItem>
+                    <MenuItem Header="5x5" Command="{Binding StartNewGameCommand}" CommandParameter="9"></MenuItem>
+                    <MenuItem Header="9x9" Command="{Binding StartNewGameCommand}" CommandParameter="17"></MenuItem>
+                </MenuItem>
+                <MenuItem Header="File">
+                    <MenuItem Header="Save" Command="{Binding SaveGameCommand}"></MenuItem>
+                    <MenuItem Header="Load" Command="{Binding LoadGameCommand}"></MenuItem>
+                </MenuItem>
+            </Menu>
+            <StatusBar DockPanel.Dock="Bottom">
+                <StatusBarItem>
+                    <TextBlock Width="75" Text="{Binding BluePoints, StringFormat='Blue: {0}', UpdateSourceTrigger=PropertyChanged}" TextAlignment="Left"/>
+                </StatusBarItem>
+                <StatusBarItem>
+                    <TextBlock Width="150" Text="{Binding OnPlayer, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Center"/>
+                </StatusBarItem>
+                <StatusBarItem>
+                    <TextBlock Width="75" Text= "{Binding RedPoints, StringFormat='Red: {0}', UpdateSourceTrigger=PropertyChanged}" TextAlignment="Right"/>
+                </StatusBarItem>
+            </StatusBar>
+            <ItemsControl ItemsSource="{Binding States}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="{Binding Size, UpdateSourceTrigger=PropertyChanged}" 
+                                     Columns="{Binding Size, UpdateSourceTrigger=PropertyChanged}"></UniformGrid>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button  Command="{Binding ClickCommand}">
+                            <Image Source="{Binding Color, UpdateSourceTrigger=PropertyChanged}" Stretch="Fill"></Image>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </DockPanel>
+    </Grid>
+</Window>
