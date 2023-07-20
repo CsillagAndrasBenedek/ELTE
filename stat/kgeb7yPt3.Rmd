@@ -1,0 +1,1435 @@
+---
+title: "ÖNÁLLÓ ADATELEMZÉS"
+author: "Csillag András Benedek"
+date: '`r Sys.Date()`'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+load(url("https://zempleni.elte.hu/e5.RData"))
+```
+\
+\
+
+## ADATTISZTÍTÁS
+
+**Nemek ellenőrzése:**
+\
+(férfi/nő) bevezetése a hibás értékek helyett.
+Ha nem férfi vagy nő szerepel a nem-nél akkor felváltva helyettesítsük oda a kettőből valamelyiket.
+\
+\
+**Kor ellenőrzése:**
+\
+N/A-k, illetve a túl alacsony vagy túl magas értékek (önállóan választott határok) kiszűrése és a rajtuk kívül vett átlag behelyettesítése 
+\
+\
+**Város ellenőrzése:**
+\
+Megnézzük van-e üres érték... nincsen.
+Kigyűjtjük a város típusokat, csak értelmes érték van, innentől úgy gondolom, hogy ezzel nincs további tennivalónk
+\
+\
+**Testmagasság ellenőrzése:**
+\
+N/A-k, illetve a túl alacsony vagy túl magas értékek (önállóan választott határok) kiszűrése és a rajtuk kívül vett átlag behelyettesítése
+\
+\
+**Jövedelem ellenőrzése:**
+\
+N/A-k, illetve a nempozitív értékek kiszűrése és a rajtuk kívül vett átlag behelyettesítése
+\
+\
+**Foglalkozás ellenőrzése:**
+\
+Megnézzük van-e üres érték... nincsen.
+Kigyűjtjük a foglalkozás típusokat, csak értelmes érték van, innentől úgy gondolom, hogy ezzel nincs további tennivalónk
+
+```{r tisztitas, echo=FALSE}
+
+# adatok megtekintése : view(xd)
+#sorok számának eltárolása
+rowNum = dim(xd)[1]
+
+
+#A korrigált adatokat kigyűjtjük egy 1D-s tömbbe (nem)
+
+nem = array(1)
+egyeb = 0
+
+for(i in 1:rowNum){
+  if(xd[i,1] == "n\xf5"){nem[i] = "no"}
+  else if(xd[i,1] == "f\xe9rfi"){nem[i] = "ferfi"}
+  else {
+    if(egyeb == 0) {
+      nem[i] = "no"
+      egyeb = egyeb + 1
+    }
+    else {
+      nem[i] = "ferfi"
+      egyeb = egyeb - 1
+    }
+  }
+  
+}
+
+
+#A korrigált adatokat kigyűjtjük egy 1D-s tömbbe (kor)
+
+kor = array(1)
+sumOfGoodAges = 0
+numOfGoodAges = 0
+
+for(i in 1:rowNum){
+  if(!is.na(xd[i,2])){
+    if(xd[i,2] >= 15 && xd[i,2] <=100){
+      sumOfGoodAges = sumOfGoodAges + xd[i,2]
+      numOfGoodAges = numOfGoodAges + 1
+    }
+  }
+}
+
+meanOfGoodAges = as.integer(sumOfGoodAges/numOfGoodAges)
+
+for(i in 1:rowNum){
+  alreadyGotValueA = FALSE
+  if(!is.na(xd[i,2])){
+    if(xd[i,2] >= 15 && xd[i,2] <=100){
+      kor[i] = xd[i,2]
+      alreadyGotValueA = TRUE
+    }
+    else{
+      kor[i] = meanOfGoodAges
+      alreadyGotValueA = TRUE
+    }
+  }
+  else if(alreadyGotValueA == FALSE){kor[i] = meanOfGoodAges}
+}
+
+
+#A korrigált adatokat kigyűjtjük egy 1D-s tömbbe (varos) 
+#Könnyebb kezelhetőség érdekében ékezetnélküli verzióra váltok
+
+isAnyEmptyVaros = any(is.na(xd[3]))
+
+varosTipusok = array(1)
+varosTipusokDb = 0
+varos = array(1)
+
+for(i in 1:rowNum){
+  if(!is.element(xd[i,3], varosTipusok)){
+    varosTipusok[varosTipusokDb + 1] = xd[i,3]
+    varosTipusokDb = varosTipusokDb + 1
+  }
+}
+
+
+for(i in 1:rowNum){
+  if(xd[i,3] == varosTipusok[1]){
+    varos[i] = "Kiskunmajsa"
+  }
+  else if(xd[i,3] == varosTipusok[2]){
+    varos[i] = "Budapest"
+  }
+  else{
+    varos[i] = "Tazlar"
+  }
+}
+
+varosTipusokUj = array(1)
+varosTipusokUj[1] = "Kiskunmajsa"
+varosTipusokUj[2] = "Budapest"
+varosTipusokUj[3] = "Tazlar"
+
+
+
+
+
+#A korrigált adatokat kigyűjtjük egy 1D-s tömbbe (foglalkozas) 
+#Könnyebb kezelhetőség érdekében ékezetnélküli verzióra váltok
+
+isAnyEmptyFoglalkozas = any(is.na(xd[4]))
+
+
+foglalkozasTipusok = array(1)
+foglalkozasTipusokDb = 0
+foglalkozas = array(1)
+
+
+for(i in 1:rowNum){
+  if(!is.element(xd[i,4], foglalkozasTipusok)){
+    foglalkozasTipusok[foglalkozasTipusokDb + 1] = xd[i,4]
+    foglalkozasTipusokDb = foglalkozasTipusokDb + 1
+  }
+}
+
+
+for(i in 1:rowNum){
+  if(xd[i,4] == foglalkozasTipusok[1]){
+    foglalkozas[i] = "Epiteszmernok"
+  }
+  else if(xd[i,4] == foglalkozasTipusok[2]){
+    foglalkozas[i] = "Pincer"
+  }
+  else{
+    foglalkozas[i] = "Allatorvos"
+  }
+}
+
+foglalkozasTipusokUj = array(1)
+foglalkozasTipusokUj[1] = "Epiteszmernok"
+foglalkozasTipusokUj[2] = "Pincer"
+foglalkozasTipusokUj[3] = "Allatorvos"
+
+
+
+
+
+
+#A korrigált adatokat kigyűjtjük egy 1D-s tömbbe (testmagassag)
+
+testmagassag = array(1)
+sumOfGoodHeights = 0
+numOfGoodHeights = 0
+
+
+
+for(i in 1:rowNum){
+  if(!is.na(xd[i,5])){
+    if(xd[i,5] >= 140 && xd[i,5] <=220){
+      sumOfGoodHeights = sumOfGoodHeights + xd[i,5]
+      numOfGoodHeights = numOfGoodHeights + 1
+    }
+  }
+}
+
+meanOfGoodHeights = as.integer(sumOfGoodHeights/numOfGoodHeights)
+
+for(i in 1:rowNum){
+  alreadyGotValueH = FALSE
+  if(!is.na(xd[i,5])){
+    if(xd[i,5] >= 140 && xd[i,5] <= 220){
+      testmagassag[i] = xd[i,5]
+      alreadyGotValueH = TRUE
+    }
+    else{
+      testmagassag[i] = meanOfGoodHeights
+      alreadyGotValueH = TRUE
+    }
+  }
+  else if(alreadyGotValueH == FALSE){testmagassag[i] = meanOfGoodHeights}
+}
+
+
+
+#A korrigált adatokat kigyűjtjük egy 1D-s tömbbe (jovedelem)
+
+jovedelem = array(1)
+sumOfGoodSalaries = 0
+numOfGoodSalaries = 0
+
+
+
+for(i in 1:rowNum){
+  if(!is.na(xd[i,6])){
+    if(xd[i,6] >  0){
+      sumOfGoodSalaries = sumOfGoodSalaries + xd[i,6]
+      numOfGoodSalaries = numOfGoodSalaries + 1
+    }
+  }
+}
+
+meanOfGoodSalaries = as.integer(sumOfGoodSalaries/numOfGoodSalaries)
+
+for(i in 1:rowNum){
+  alreadyGotValueS = FALSE
+  if(!is.na(xd[i,6])){
+    if(xd[i,6] > 0){
+      jovedelem[i] = xd[i,6]
+      alreadyGotValueS = TRUE
+    }
+    else{
+      jovedelem[i] = meanOfGoodSalaries
+      alreadyGotValueS = TRUE
+    }
+  }
+  else if(alreadyGotValueS == FALSE){jovedelem[i] = meanOfGoodSalaries}
+}
+
+
+```
+
+
+```{r leiro, echo=FALSE}
+#A javított adatok eltárolására létrehozok egy új data.frame-et 
+
+
+JavitottValtozat <- data.frame(nem,kor,varos,foglalkozas,testmagassag,jovedelem)
+```
+
+A javított változatra summary()-t meghívva a következő eredményt kapjuk:
+```{r}
+
+summary(JavitottValtozat)
+```
+\
+\
+
+## LEÍRÓ STATISZTIKA
+
+
+
+```{r, echo=FALSE}
+#no/ferfi arany
+
+numberOfMen = 0
+numberOfWomen = 0
+
+for(i in 1:rowNum){
+  if(JavitottValtozat[i,1] == "no"){numberOfWomen = numberOfWomen + 1}
+  else {numberOfMen = numberOfMen + 1}
+}
+
+
+nemekAranya = c(numberOfWomen, numberOfMen)
+
+pie(nemekAranya,labels = c("Nők", "Férfiak"), main = "Nemek megoszlásának aránya", col=c('purple', 'green'), init.angle = 60)
+```
+
+<!--_Nemek megoszlásának arányát ábrázolom kördiagramon: pontosan 50-50% (250-250 fő)._--> 
+_Pontosan 50-50% (250-250 fő)._
+
+***
+```{r, echo=FALSE}
+#Építészmérnök/Állatorvos/Pincér arány ábrázolása kördiagramon
+
+numberOfEpiteszmernok = 0
+numberOfAllatorvos = 0
+numberOfPincer = 0
+
+
+for(i in 1:rowNum){
+  if(JavitottValtozat[i,4] == "Epiteszmernok"){numberOfEpiteszmernok = numberOfEpiteszmernok + 1}
+  else if(JavitottValtozat[i,4] == "Allatorvos"){numberOfAllatorvos = numberOfAllatorvos + 1}
+  else {numberOfPincer = numberOfPincer + 1}
+}
+
+foglalkozasokAranya = c(numberOfEpiteszmernok, numberOfAllatorvos, numberOfPincer)
+
+pie(foglalkozasokAranya, labels = c("Építészmérnök", "Állatorvos", "Pincér"), main = "Foglalkozások megoszlásának aránya")
+```
+
+_Foglalkozások nagyjából egyenlően oszlanak el, az építészmérnökök száma valamivel kisebb, mint a az állatorvosoké, illetve pincéreké._
+
+***
+```{r, echo=FALSE}
+#Budapest/Kiskunmajsa/Tázlár arány ábrázolása kördiagramon
+
+numberOfBudapest = 0
+numberOfKiskunmajsa = 0
+numberOfTazlar = 0
+
+
+for(i in 1:rowNum){
+  if(JavitottValtozat[i,3] == "Budapest"){numberOfBudapest = numberOfBudapest + 1}
+  else if(JavitottValtozat[i,3] == "Kiskunmajsa"){numberOfKiskunmajsa = numberOfKiskunmajsa + 1}
+  else {numberOfTazlar = numberOfTazlar + 1}
+}
+
+varosokAranya = c(numberOfBudapest, numberOfKiskunmajsa, numberOfTazlar)
+
+pie(varosokAranya, labels = c("Budapest", "Kiskunmajsa", "Tázlár"), main = "Városok megoszlásának aránya")
+```
+
+_Nagyjából a válaszadók 2/3-a Budepestet jelölte meg városának, míg a fennmaradó válaszok 1:2 arányban Kiskunmajsa és Tazlar közt oszlottak meg._
+
+***
+```{r,echo=FALSE}
+numberOfEpiteszmernokMen = 0
+numberOfEpiteszmernokWomen = 0
+numberOfAllatorvosMen = 0
+numberOfAllatorvosWomen = 0
+numberOfPincerMen = 0
+numberOfPincerWomen = 0
+
+for(i in 1:rowNum){
+  if(JavitottValtozat[i,4] == "Epiteszmernok"){
+    if(JavitottValtozat[i,1] == "no"){
+      numberOfEpiteszmernokWomen = numberOfEpiteszmernokWomen + 1
+    }
+    else{
+      numberOfEpiteszmernokMen = numberOfEpiteszmernokMen + 1
+    }
+  }
+  else if(JavitottValtozat[i,4] == "Allatorvos"){
+    if(JavitottValtozat[i,1] == "no"){
+      numberOfAllatorvosWomen = numberOfAllatorvosWomen + 1
+    }
+    else{
+      numberOfAllatorvosMen = numberOfAllatorvosMen + 1
+    }
+  }
+  else{
+    if(JavitottValtozat[i,1] == "no"){
+      numberOfPincerWomen = numberOfPincerWomen + 1
+    }
+    else{
+      numberOfPincerMen = numberOfPincerMen + 1
+    }
+  }
+}
+
+FoglalkozasokNemekSzerint <- as.matrix(data.frame(Epiteszmernok = c(numberOfEpiteszmernokMen, numberOfEpiteszmernokWomen),
+                                       Allatorvos = c(numberOfAllatorvosMen, numberOfAllatorvosWomen),
+                                       Pincer = c(numberOfPincerMen, numberOfPincerWomen)))
+
+
+rownames(FoglalkozasokNemekSzerint) <- c("Férfi", "Nő")
+colnames(FoglalkozasokNemekSzerint) <- c("Építészmérnök", "Állatorvos", "Pincér")
+
+
+
+barplot(FoglalkozasokNemekSzerint, col = c("#1b98e0", "#353436"), main = "Foglalkozások megoszlása nemek szerint", xlab = "Foglalkozások")
+legend("topright",legend = rownames(FoglalkozasokNemekSzerint), fill = c( "#353436", "#1b98e0"))
+```
+
+_A női-férfi arány szakmánként (csakúgy, mint összességében) szinte azonos._
+
+***
+```{r, echo=FALSE}
+#Kulon ferfi és noi data.frame letrehozasa
+
+ferfiDb = 0
+noDb=0
+
+nemN = array(1)
+korN = array(1)
+varosN = array(1)
+foglalkozasN = array(1)
+testmagassagN = array(1)
+jovedelemN = array(1)
+
+
+nemF = array(1)
+korF = array(1)
+varosF = array(1)
+foglalkozasF = array(1)
+testmagassagF = array(1)
+jovedelemF = array(1)
+
+
+for(i in 1:rowNum){
+  if(JavitottValtozat[i,1] == "no"){
+    nemN[noDb] = JavitottValtozat[i,1]
+    korN[noDb] = JavitottValtozat[i,2]
+    varosN[noDb] = JavitottValtozat[i,3]
+    foglalkozasN[noDb] = JavitottValtozat[i,4]
+    testmagassagN[noDb] = JavitottValtozat[i,5]
+    jovedelemN[noDb] = JavitottValtozat[i,6]
+    noDb = noDb + 1
+  }
+  else{
+    nemF[ferfiDb] = JavitottValtozat[i,1]
+    korF[ferfiDb] = JavitottValtozat[i,2]
+    varosF[ferfiDb] = JavitottValtozat[i,3]
+    foglalkozasF[ferfiDb] = JavitottValtozat[i,4]
+    testmagassagF[ferfiDb] = JavitottValtozat[i,5]
+    jovedelemF[ferfiDb] = JavitottValtozat[i,6]
+    ferfiDb = ferfiDb + 1
+  }
+}
+
+dfNok <- data.frame(nemN, korN, varosN, foglalkozasN, testmagassagN, jovedelemN)
+dfFerfiak <- data.frame(nemF, korF, varosF, foglalkozasF, testmagassagF, jovedelemF)
+
+```
+
+```{r, echo=FALSE}
+par(mfrow = c(1,2))
+hist(testmagassagN, xlim = range(140,220), main = "Nők megoszl. testm. szerint", xlab = "testmagasság(cm)", ylab = "fő", col = 'purple' )
+hist(testmagassagF, xlim = range(140,220), main = "Férfiak megoszl. testm. szerint", xlab = "testmagasság(cm)", ylab = "fő",  col = 'green')
+```
+
+_Hisztogramon ábrázoljuk a testmagasság szerinti megoszlásokat mind nők, mind férfiak esetében._
+
+***
+```{r, echo=FALSE}
+par(mfrow = c(1,2))
+hist(korN, xlim = range(15,100), main = "Nők megoszlása kor szerint", xlab = "kor(év)", ylab = "fő", col = 'purple' )
+hist(korF, xlim = range(15,100), main = "Férfiak megoszlása kor szerint", xlab = "kor(év)", ylab = "fő",  col = 'green')
+```
+
+_Hisztogramon ábrázoljuk a kor szerinti megoszlásokat mind nők, mind férfiak esetében._
+
+***
+```{r, echo=FALSE}
+#Magasságok átlaga és szórása (mindenki, csak férfiak, csak nők) esetében
+
+avarageHeight = mean(testmagassag)
+standarddeviationHeight = sd(testmagassag)
+avarageHeightWomen = mean(testmagassagN)
+standarddeviationHeightWomen = sd(testmagassagN)
+avarageHeightMen = mean(testmagassagF)
+standarddeviationHeightMen = sd(testmagassagF)
+
+heightTable <- data.frame(
+  Mindenki = c(avarageHeight, standarddeviationHeight),
+  Nok = c(avarageHeightWomen, standarddeviationHeightWomen),
+  Ferfiak = c(avarageHeightMen, standarddeviationHeightMen)
+)
+row.names(heightTable) = c("Átlag", "Szórás")
+colnames(heightTable) = c("Mindenki", "Nők", "Férfiak")
+
+#cat("Magasságok átlaga és szórása mindenki, nők, illetve férfiak értékei alapján az alábbi táblázatban megfigyelhetők: ")
+
+
+```
+
+**Magasságok átlaga és szórása (mindenki/nők/férfiak):**
+
+```{r, echo=FALSE}
+heightTable
+```
+
+```{r, echo=FALSE}
+#(95%-os) Konfidencia intervallumok  kiszámítasa testmagasságok normál eloszlásúak
+konfintMindenki = c(avarageHeight - qnorm(0.975)*(standarddeviationHeight/sqrt(length(testmagassag))), avarageHeight + qnorm(0.975)*(standarddeviationHeight/sqrt(length(testmagassag))))
+
+konfintNok = c(avarageHeightWomen - qnorm(0.975)*(standarddeviationHeightWomen/sqrt(length(testmagassagN))), avarageHeightWomen + qnorm(0.975)*(standarddeviationHeightWomen/sqrt(length(testmagassagN))))
+
+konfintFerfiak = c(avarageHeightMen - qnorm(0.975)*(standarddeviationHeightMen/sqrt(length(testmagassagF))), avarageHeightMen + qnorm(0.975)*(standarddeviationHeightMen/sqrt(length(testmagassagF))))
+
+
+konfIntervTable <- data.frame(
+  konfintMindenki,
+  konfintNok,
+  konfintFerfiak
+)
+row.names(konfIntervTable) = c("95%-os alsó", "95%-os felső")
+colnames(konfIntervTable) = c("Mindenki", "Nők", "Férfiak")
+
+
+#cat("Magasságok 95%-os alsó és felső intervalluma mindenki, nők, illetve férfiak értékei alapján az alábbi táblázatban megfigyelhetők: ")
+
+
+
+
+```
+
+
+**Magasságok 95%-os alsó és felső intervalluma (mindenki/nők/férfiak):**
+
+```{r, echo=FALSE}
+konfIntervTable
+```
+***
+
+### BOXPLOTOK
+
+**Testmagasság~Nem**
+\
+```{r, echo=FALSE}
+#testmagasság~nem ábrázolása boxplottal
+boxplot(testmagassag~nem, data = JavitottValtozat, ylab = "Testmagasság", xlab = "Nem")
+
+```
+
+_A férfiak és a nők többségében hasonló magassággal rendelkeznek, a nők átlagosan kicsit alacsonyabbak, míg a férfiaknál a kisebb a minimumérték és nagyobb a maximumérték, vagyis a felső-, illetve alsó-kvartilis esetén nagyobb a szórás._
+
+\
+\
+
+**Kor~Nem**
+\
+```{r, echo=FALSE}
+#kor~nem ábrázolása boxplottal
+boxplot(kor~nem, data = JavitottValtozat, ylab = "Kor", xlab = "Nem")
+
+```
+
+_A férfiak és nők korának átlaga nagyjából megegyezik, a nőknél a felső-, illetve alsó-kvartilis határa is valamivel lejjebb helyezkedik el._
+
+\
+\
+
+**Jövedelem~Nem**
+\
+```{r, echo=FALSE}
+#jövedelem~nem ábrázolása boxplottal
+boxplot(jovedelem~nem, data = JavitottValtozat, ylab = "Jövedelem", xlab = "Nem")
+
+```
+
+_A férfiak és nők átlagfizetése nagyjából megegyezik, a férfiaknál valamivel szélesebb skálán helyezkednek el a felső-, illetve alsó-kvartilis közötti értékek. A férfiaknál a maximum nagyobb, ugyanakkor a nőknél több felfelé kiugró érték tapasztalható_
+
+\
+\
+
+**Jövedelem~Város**
+\
+```{r, echo=FALSE}
+#jövedelem~város ábrázolása boxplottal
+boxplot(jovedelem~varos, data = JavitottValtozat,  ylab = "Jövedelem", xlab = "Város")
+
+```
+
+_Egyértelműen kirajzolódik, hogy Budapest fizetései mennyivel a másik két város előtt járnak. A felső kvartilis a másik két város maximumával hozható párhuzamba. Természetesen az átlagfizetés is jóval magasabb, mint máshol._
+
+\
+\
+
+**Jövedelem~Foglalkozás**
+\
+```{r, echo=FALSE}
+#jövedelem~foglalkozás ábrázolása boxplottal
+boxplot(jovedelem~foglalkozas, data = JavitottValtozat,  ylab = "Jövedelem", xlab = "Foglalkozás")
+
+```
+
+_Az állatorvosok és építészmérnökök fizetése hasonlóan épül fel, előbbi esetén több kiugróan magas érték tapasztalható. A pincérek fizetése jóval elmarad az előbbi kettőtől, a maximuma a az állatorvosok és építészmérnökök alsó kvartilise és mediánja között helyezkedik el ami sokat mondó adat._ 
+
+\
+\
+
+## HIPOTÉZISVIZSGÁLAT
+
+### Nők és férfiak jövedelmének vizsgálata
+
+H0 hipotézis: nők és férfiak jövedelme egyenlő
+
+H1 hipotézis: nők és férfiak jövedelme nem egyenlő
+
+```{r, echo=FALSE}
+var.test(jovedelemF, jovedelemN)
+
+```
+Jól látható, hogy számolhatunk egyenlő szórással. (p-value = 0.9237 > 0.05, ha 95%-os konfidencia-intervallummal számolunk)
+
+
+```{r, echo=FALSE}
+
+
+t.test(jovedelemF, jovedelemN, var.equal = T , conf.level = 0.90)
+
+
+```
+
+Mivel p = 0.7362 > 0.1 (90%-os konfidencia intervallum esetén) tehát a nullhipotézist nem tudjuk elvetni, vagyis nem tudjuk tagadni, hogy a férfiak és a nők egyenlően keresnek.
+
+
+```{r,echo=FALSE}
+#Kigyűjtöm a jövedelmeket foglalkozás szerint
+
+epiteszmernokokJov = array(1)
+allatorvosokJov = array(1)
+pincerekJov = array(1)
+
+counterOfE = 0
+counterOfA = 0
+counterOfP = 0
+
+for(i in 1:rowNum){
+  if(JavitottValtozat[i,4] == "Epiteszmernok"){
+    epiteszmernokokJov[counterOfE] = JavitottValtozat[i,6]
+    counterOfE = counterOfE + 1
+  }
+  else if(JavitottValtozat[i,4] == "Allatorvos"){
+    allatorvosokJov[counterOfA] = JavitottValtozat[i,6]
+    counterOfA = counterOfA + 1
+  }
+  else{
+    pincerekJov[counterOfP] = JavitottValtozat[i,6]
+    counterOfP = counterOfP + 1
+  }
+}
+
+```
+
+\
+\
+
+### Építészmérnökök és állatorvosok jövedelmének vizsgálata
+
+H0 hipotézis: építészmérnökök és állatorvosok jövedelme egyenlő
+
+H1 hipotézis: építészmérnökök és állatorvosok jövedelme nem egyenlő
+
+```{r, echo=FALSE}
+var.test(epiteszmernokokJov, allatorvosokJov)
+
+```
+Jól látható, hogy p-value = 0.07833 > 0.05, 95%-os konfidencia-intervallum választás esetén tehét számolhatunk egyenlő szórással.
+
+```{r, echo=FALSE}
+
+t.test(epiteszmernokokJov, allatorvosokJov, var.equal = T )
+
+```
+
+Mivel p nagy (p = 0.7574 > 0.05),  a nullhipotézist nem tudjuk elvetni, vagyis nem tudjuk tagadni, hogy az építészmérnökök és állatorvosok jövedelme egyenlő.
+
+
+\
+\
+
+### Állatorvosok és pincérek jövedelmének vizsgálata
+
+H0 hipotézis: pincérek legalább annyit keresnek, mint az állatorvosok (pincér >= állatorvos)
+
+H1 hipotézis: állatorvosok többet keresnek, mint a pincérek (pincér < állatorvos)
+
+```{r, echo=FALSE}
+var.test(allatorvosokJov, pincerekJov)
+
+```
+
+Mivel p nagyon kicsi (p < 2.2e-16), ezért nem számolhatunk egyenlő szórással, tehát Welch-próbát alkalmazunk.
+
+
+```{r, echo=FALSE}
+
+t.test(allatorvosokJov, pincerekJov, alternative =  "greater", var.equal = F )
+
+```
+
+Mivel p nagyon kicsi (p < 2.2e-16), ezért a nullhipotézist elvetjük, tehát az első hipotézist elfogadjuk, miszerint az állatorvosok többet keresnek, mint a pincérek.
+
+\
+\
+
+### Építészmérnökök és pincérek jövedelmének vizsgálata
+
+H0 hipotézis: pincérek legalább annyit keresnek, mint az építészmérnökök (pincér >= építészmérnök)
+
+H1 hipotézis: építészmérnökök többet keresnek, mint a pincérek (pincér < építészmérnök)
+
+
+```{r, echo=FALSE}
+var.test(epiteszmernokokJov, pincerekJov)
+
+```
+
+Mivel p nagyon kicsi (p < 2.2e-16), ezért nem számolhatunk egyenlő szórással, tehát Welch-próbát alkalmazunk.
+
+
+```{r, echo=FALSE}
+
+t.test(epiteszmernokokJov, pincerekJov, alternative =  "greater", var.equal = F )
+
+```
+
+
+Mivel p nagyon kicsi (p < 2.2e-16), ezért a nullhipotézist elvetjük, tehát az első hipotézist elfogadjuk, miszerint az építészmérnökök többet keresnek, mint a pincérek.
+
+
+
+```{r, echo=FALSE}
+cat('A korcsoportok meghatározásához a quantile()-t használom, hogy a csoportok létszámában ne legyen szignifikáns különbség.', '\ngroup1:  -', quantile(kor, 0.2), '\ngroup2: ', quantile(kor, 0.2), '-' , quantile(kor, 0.4), '\ngroup3: ', quantile(kor, 0.4),'-', quantile(kor, 0.6), '\ngroup4: ', quantile(kor, 0.6), '-',  quantile(kor, 0.8), '\ngroup5: ', quantile(kor, 0.8), '-', quantile(kor, 1))
+```
+
+
+```{r, echo=FALSE}
+
+limit1 = quantile(kor, 0.2)
+limit2 = quantile(kor, 0.4)
+limit3 = quantile(kor, 0.6)
+limit4 = quantile(kor, 0.8)
+
+group1 = array(1)
+group2 = array(2)
+group3 = array(3)
+group4 = array(4)
+group5 = array(5)
+
+counterAge1 = 0
+counterAge2 = 0
+counterAge3 = 0
+counterAge4 = 0
+counterAge5 = 0
+
+
+for(i in 1:rowNum){
+  if(JavitottValtozat[i,2] <= limit1){
+    group1[counterAge1] = JavitottValtozat[i,6]
+    counterAge1 = counterAge1 + 1
+  }
+  else if(JavitottValtozat[i,2] > limit1 && JavitottValtozat[i,2] <= limit2){
+    group2[counterAge2] = JavitottValtozat[i,6]
+    counterAge2 = counterAge2 + 1
+  }
+  else if(JavitottValtozat[i,2] > limit2 && JavitottValtozat[i,2] <= limit3){
+    group3[counterAge3] = JavitottValtozat[i,6]
+    counterAge3 = counterAge3 + 1
+  }
+  else if(JavitottValtozat[i,2] > limit3 && JavitottValtozat[i,2] <= limit4){
+    group4[counterAge4] = JavitottValtozat[i,6]
+    counterAge4 = counterAge4 + 1
+  }
+  else{
+    group5[counterAge5] = JavitottValtozat[i,6]
+    counterAge5 = counterAge5 + 1
+  }
+}
+
+```
+
+\
+\
+
+### Group1 (legfiatalabbak) és group5 (legidősebbek) jövedelmének vizsgálata
+
+H0 hipotézis: group1 tagjai legalább annyit keresnek, mint a group5 tagjai (group1 >= group5)
+
+H1 hipotézis: group5 tagjai többet keresnek, mint a group1 tagjai (group1 < group5)
+
+```{r, echo=FALSE}
+
+var.test(group1, group5)
+
+```
+
+Mivel p nagyon kicsi (p < 2.2e-16), ezért nem számolhatunk egyenlő szórással, tehát Welch-próbát alkalmazunk.
+
+```{r, echo=FALSE}
+
+t.test(group1, group5, alternative =  "less", var.equal = F)
+
+```
+Mivel p nagyon kicsi (p = 6.857e-15), ezért H0-t elvetjük és H1-t elfogadjuk. Ezek alapján állíthatjuk, hogy a group5 tagjai többet keresnek, mint a group1 tagjai.
+
+\
+\
+
+### Group4 és group5 jövedelmének vizsgálata
+
+H0 hipotézis: group4 tagjai legalább annyit keresnek, mint a group5 tagjai (group4 >= group5)
+
+H1 hipotézis: group5 tagjai többet keresnek, mint a group4 tagjai (group4 < group5)
+
+```{r, echo=FALSE}
+
+var.test(group4, group5)
+
+```
+
+
+Mivel p nagyon kicsi (p = 0.01015), ezért nem számolhatunk egyenlő szórással, tehát Welch-próbát alkalmazunk.
+
+
+```{r, echo=FALSE}
+
+t.test(group4, group5, alternative =  "less", var.equal = F)
+
+```
+
+Mivel p nagyon kicsi (p = 0.001948), ezért H0-t elvetjük és H1-t elfogadjuk. Ezek alapján állíthatjuk, hogy a group5 tagjai többet keresnek, mint a group4 tagjai.
+
+\
+\
+
+### Group2 és group3 jövedelmének vizsgálata
+
+H0 hipotézis: group2 tagjai legalább annyit keresnek, mint a group3 tagjai (group2 >= group3)
+
+H1 hipotézis: group3 tagjai többet keresnek, mint a group2 tagjai (group2 < group3)
+
+```{r, echo=FALSE}
+
+var.test(group2, group3)
+
+```
+
+Mivel p = 0.2637, ezért számolhatunk egyenlő szórással. (=> kétmintás t-próba)
+
+
+
+```{r, echo=FALSE}
+
+t.test(group2, group3, alternative =  "less", var.equal = T)
+
+```
+
+Mivel p = 0.07917, 
+
+95%-os konfidencia intervallum esetén p > 0.05, ezért H0-t nem tudjuk elvetni, vagyis nem tudjuk cáfolni, hogy group2 tagjai legalább annyit keresnek, mint a group3 tagjai.
+
+
+90%-os konfidencia intervallum esetén p < 0.10, ezért H0-t elvetjük és H1-t elfogadjuk. Vagyis állíthatjuk a group3 tagjai többet keresnek, mint a group2 tagjai.
+
+\
+\
+
+### Group1 és group2 jövedelmének vizsgálata
+
+H0 hipotézis: group1 tagjai legfeljebb annyit keresnek, mint a group2 tagjai (group1 <= group2)
+
+H1 hipotézis: group1 tagjai többet keresnek, mint a group2 tagjai (group1 > group2)
+
+
+```{r, echo=FALSE}
+
+var.test(group1, group2)
+
+```
+
+
+
+Mivel p nagyon kicsi (p = 2.068e-05), ezért nem számolhatunk egyenlő szórással, tehát Welch-próbát alkalmazunk.
+
+```{r, echo=FALSE}
+
+t.test(group1, group2, alternative =  "greater", var.equal = F)
+
+```
+
+Mivel p nagy (p = 0.9999), ezért nem tudjuk elvetni H0-t.Vagyis nem tudjuk tagadni, hogy group1 tagjai legfeljebb annyit keresnek, mint a group2 tagjai.
+
+\
+\
+
+## FÜGGETLENSÉGVIZSGÁLAT
+
+### Kor és jövedelem függetlenségének vizsgálata
+
+A már korábban használt korcsoportok mellett a jövedelmet 3 részre osztom.
+
+```{r, echo=FALSE}
+cat('A jövedelem szerinti csoportok meghatározásához a quantile()-t használom, hogy a csoportok létszámában ne legyen szignifikáns különbség.', '\njövedelemcsop1:  -',  quantile(jovedelem, 0.33), '\njövedelemcsop2: ', quantile(jovedelem, 0.33), '-', quantile(jovedelem, 0.66), '\njövedelemcsop3: ', quantile(jovedelem, 0.66),'-', quantile(jovedelem, 1))
+
+
+cat('A korcsoportok mégegyszer:', '\ngroup1:  -', quantile(kor, 0.2), '\ngroup2: ', quantile(kor, 0.2), '-' , quantile(kor, 0.4), '\ngroup3: ', quantile(kor, 0.4),'-', quantile(kor, 0.6), '\ngroup4: ', quantile(kor, 0.6), '-',  quantile(kor, 0.8), '\ngroup5: ', quantile(kor, 0.8), '-', quantile(kor, 1))
+
+```
+H0: a kor és a jövedelem függetlenek
+
+H1: nem függetlenek
+
+```{r, echo=FALSE}
+
+boundary1 = quantile(jovedelem, 0.33)
+boundary2 = quantile(jovedelem, 0.66)
+
+tablazatKJ = matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=3)
+rownames(tablazatKJ) = c("korcsoprot1","korcsoport2", "korcsoport3","korcsoport4", "korcsoport5")
+colnames(tablazatKJ) = c("jövedelemcsop1","jövedelemcsop2","jövedelemcsop3")
+
+for(i in 1:rowNum){
+  if(JavitottValtozat[i,2] <= limit1 ){
+    if(JavitottValtozat[i,6] <= boundary1){
+      tablazatKJ[1,1]=tablazatKJ[1,1]+1
+    }
+    else if(JavitottValtozat[i,6] > boundary1 && JavitottValtozat[i,6] <= boundary2){
+      tablazatKJ[1,2]=tablazatKJ[1,2]+1
+    }
+    else{
+      tablazatKJ[1,3]=tablazatKJ[1,3]+1
+    }
+  }
+  else if(JavitottValtozat[i,2] > limit1 && JavitottValtozat[i,2] <= limit2  ){
+    if(JavitottValtozat[i,6] <= boundary1){
+      tablazatKJ[2,1]=tablazatKJ[2,1]+1
+    }
+    else if(JavitottValtozat[i,6] > boundary1 && JavitottValtozat[i,6] <= boundary2){
+      tablazatKJ[2,2]=tablazatKJ[2,2]+1
+    }
+    else{
+      tablazatKJ[2,3]=tablazatKJ[2,3]+1
+    }
+  }
+  else if(JavitottValtozat[i,2] > limit2 && JavitottValtozat[i,2] <= limit3){
+    if(JavitottValtozat[i,6] <= boundary1){
+      tablazatKJ[3,1]=tablazatKJ[3,1]+1
+    }
+    else if(JavitottValtozat[i,6] > boundary1 && JavitottValtozat[i,6] <= boundary2){
+      tablazatKJ[3,2]=tablazatKJ[3,2]+1
+    }
+    else{
+      tablazatKJ[3,3]=tablazatKJ[3,3]+1
+    }
+  }
+  else if(JavitottValtozat[i,2] > limit3 && JavitottValtozat[i,2] <= limit4){
+    if(JavitottValtozat[i,6] <= boundary1){
+      tablazatKJ[4,1]=tablazatKJ[4,1]+1
+    }
+    else if(JavitottValtozat[i,6] > boundary1 && JavitottValtozat[i,6] <= boundary2){
+      tablazatKJ[4,2]=tablazatKJ[4,2]+1
+    }
+    else{
+      tablazatKJ[4,3]=tablazatKJ[4,3]+1
+    }
+  }
+  else{
+    if(JavitottValtozat[i,6] <= boundary1){
+      tablazatKJ[5,1]=tablazatKJ[5,1]+1
+    }
+    else if(JavitottValtozat[i,6] > boundary1 && JavitottValtozat[i,6] <= boundary2){
+      tablazatKJ[5,2]=tablazatKJ[5,2]+1
+    }
+    else{
+      tablazatKJ[5,3]=tablazatKJ[5,3]+1
+    }
+  }
+}
+
+tablazatKJ
+chisq.test(tablazatKJ)
+```
+
+Mivel p nagyon kicsi (p = 8.155e-10), ezért elutasítjuk H0-t, vagyis a kor és a jövedelem nem függetlenek.
+
+\
+\
+
+### Foglalkozás és jövedelem függetlenségének vizsgálata
+
+```{r, echo=FALSE}
+
+cat('A jövedelem szerinti csoportok mégegyszer:', '\njövedelemcsop1:  -',  quantile(jovedelem, 0.33), '\njövedelemcsop2: ', quantile(jovedelem, 0.33), '-', quantile(jovedelem, 0.66), '\njövedelemcsop3: ', quantile(jovedelem, 0.66),'-', quantile(jovedelem, 1))
+
+cat('Foglalkozás szerinti csoportok:', '\nÉpítészmérnök', 'Állatorvos', 'Pincér')
+```
+
+H0: a foglalkozás és a jövedelem függetlenek 
+
+H1: nem függetlenek
+
+```{r, echo=FALSE}
+
+tablazatFJ = matrix(c(0,0,0,0,0,0,0,0,0),nrow=3,ncol=3)
+rownames(tablazatFJ) = c("építészmérnök","állatorvos","pincér")
+colnames(tablazatFJ) = c("jövedelemcsop1","jövedelemcsop2","jövedelemcsop3")
+
+for(i in 1:rowNum){
+  if(JavitottValtozat[i,4]  == "Epiteszmernok" ){
+    if(JavitottValtozat[i,6] <= boundary1){
+      tablazatFJ[1,1]=tablazatFJ[1,1]+1
+    }
+    else if(JavitottValtozat[i,6] > boundary1 && JavitottValtozat[i,6] <= boundary2){
+      tablazatFJ[1,2]=tablazatFJ[1,2]+1
+    }
+    else{
+      tablazatFJ[1,3]=tablazatFJ[1,3]+1
+    }
+  }
+  else if(JavitottValtozat[i,4]  == "Allatorvos" ){
+    if(JavitottValtozat[i,6] <= boundary1){
+      tablazatFJ[2,1]=tablazatFJ[2,1]+1
+    }
+    else if(JavitottValtozat[i,6] > boundary1 && JavitottValtozat[i,6] <= boundary2){
+      tablazatFJ[2,2]=tablazatFJ[2,2]+1
+    }
+    else{
+      tablazatFJ[2,3]=tablazatFJ[2,3]+1
+    }
+  }
+  else{
+    if(JavitottValtozat[i,6] <= boundary1){
+      tablazatFJ[3,1]=tablazatFJ[3,1]+1
+    }
+    else if(JavitottValtozat[i,6] > boundary1 && JavitottValtozat[i,6] <= boundary2){
+      tablazatFJ[3,2]=tablazatFJ[3,2]+1
+    }
+    else{
+      tablazatFJ[3,3]=tablazatFJ[3,3]+1
+    }
+  }
+}
+
+tablazatFJ
+chisq.test(tablazatFJ)
+
+
+```
+
+Mivel p nagyon kicsi (p < 2.2e-16), ezért elutasítjuk H0-t, vagyis a foglalkozás és a jövedelem nem függetlenek.
+
+\
+\
+
+### Foglalkozás és kor függetlenségének vizsgálata
+
+```{r, echo=FALSE}
+
+cat('A korcsoportok mégegyszer:', '\ngroup1:  -', quantile(kor, 0.2), '\ngroup2: ', quantile(kor, 0.2), '-' , quantile(kor, 0.4), '\ngroup3: ', quantile(kor, 0.4),'-', quantile(kor, 0.6), '\ngroup4: ', quantile(kor, 0.6), '-',  quantile(kor, 0.8), '\ngroup5: ', quantile(kor, 0.8), '-', quantile(kor, 1))
+
+cat('Foglalkozás szerinti csoportok:', '\nÉpítészmérnök', 'Állatorvos', 'Pincér')
+```
+
+
+H0: a foglalkozás és a kor függetlenek
+
+H1: nem függetlenek
+
+```{r, echo=FALSE}
+
+tablazatFK = matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=3,ncol=5)
+colnames(tablazatFK) = c("korcsoprt1","korcsoport2", "korcsoport3","korcsoport4", "korcsoport5")
+rownames(tablazatFK) = c("építészmérnök","állatorvos","pincér")
+
+for(i in 1:rowNum){
+  if(JavitottValtozat[i,2] <= limit1 ){
+    if(JavitottValtozat[i,4]  == "Epiteszmernok"){
+      tablazatFK[1,1]=tablazatFK[1,1]+1
+    }
+    else if(JavitottValtozat[i,4]  == "Allatorvos"){
+      tablazatFK[2,1]=tablazatFK[2,1]+1
+    }
+    else{
+      tablazatFK[3,1]=tablazatFK[3,1]+1
+    }
+  }
+  else if(JavitottValtozat[i,2] > limit1 && JavitottValtozat[i,2] <= limit2  ){
+    if(JavitottValtozat[i,4]  == "Epiteszmernok"){
+      tablazatFK[1,2]=tablazatFK[1,2]+1
+    }
+    else if(JavitottValtozat[i,4]  == "Allatorvos"){
+      tablazatFK[2,2]=tablazatFK[2,2]+1
+    }
+    else{
+      tablazatFK[3,2]=tablazatFK[3,2]+1
+    }
+  }
+  else if(JavitottValtozat[i,2] > limit2 && JavitottValtozat[i,2] <= limit3){
+    if(JavitottValtozat[i,4]  == "Epiteszmernok"){
+      tablazatFK[1,3]=tablazatFK[1,3]+1
+    }
+    else if(JavitottValtozat[i,4]  == "Allatorvos"){
+      tablazatFK[2,3]=tablazatFK[2,3]+1
+    }
+    else{
+      tablazatFK[3,3]=tablazatFK[3,3]+1
+    }
+  }
+  else if(JavitottValtozat[i,2] > limit3 && JavitottValtozat[i,2] <= limit4){
+    if(JavitottValtozat[i,4]  == "Epiteszmernok"){
+      tablazatFK[1,4]=tablazatFK[1,4]+1
+    }
+    else if(JavitottValtozat[i,4]  == "Allatorvos"){
+      tablazatFK[2,4]=tablazatFK[2,4]+1
+    }
+    else{
+      tablazatFK[3,4]=tablazatFK[3,4]+1
+    }
+  }
+  else{
+    if(JavitottValtozat[i,4]  == "Epiteszmernok"){
+      tablazatFK[1,5]=tablazatFK[1,5]+1
+    }
+    else if(JavitottValtozat[i,4]  == "Allatorvos"){
+      tablazatFK[2,5]=tablazatFK[2,5]+1
+    }
+    else{
+      tablazatFK[3,5]=tablazatFK[3,5]+1
+    }
+  }
+}
+
+tablazatFK
+chisq.test(tablazatFK)
+```
+
+
+Mivel p nagy (p = 0.2041), ezért nem tudjuk elvetni H0-t, vagyis a a foglalkozás és a kor függetlenek.
+
+\
+\
+
+## NORMALITÁSVIZSGÁLAT
+
+### Jövedelem normalitás vizsgálata
+
+```{r,echo=FALSE}
+
+shapiro.test(jovedelem)
+
+```
+
+A shapiro testet alkalmazva azt kaptuk, hogy p nagyon kicsi (p < 2.2e-16), tehát a jövedelem nem normális eloszlású.
+
+\
+\
+
+### Kor normalitás vizsgálata
+
+```{r,echo=FALSE}
+
+shapiro.test(kor)
+
+```
+
+A shapiro testet alkalmazva azt kaptuk, hogy p nagyon kicsi (p = 1.758e-10), tehát a kor nem normális eloszlású.
+
+\
+\
+
+### Testmagasság normalitás vizsgálata
+
+```{r,echo=FALSE}
+
+shapiro.test(testmagassag)
+
+```
+
+A shapiro testet alkalmazva azt kaptuk, hogy p kicsi (p = 0.03347), tehát a testmagasság nem normális eloszlású (95%-os konfidencia intervallummal számolva).
+
+\
+\
+
+### Férfiak testmagasságának normalitás vizsgálata
+
+```{r,echo=FALSE}
+
+shapiro.test(testmagassagF)
+
+```
+
+A shapiro testet alkalmazva azt kaptuk, hogy p nagy (p = 0.4209), tehát a férfiak testmagassága normális eloszlású.
+
+\
+\
+
+## LINEÁRIS MODELLEK JÖVEDELEMRE
+
+### Kor szerinti jövedelem
+
+Megvizsgáljuk, hogy milyen hatással van a kor a jövedelemre.
+
+```{r, echo=FALSE}
+linearmodel_jov_kor <- lm(jovedelem~kor, data = JavitottValtozat)
+plot(kor, jovedelem)
+abline(linearmodel_jov_kor)
+summary(linearmodel_jov_kor)
+```
+
+Az értékekből azt a következtetést tudjuk levonni, hogy a kor valóban hatással van a jövedelemre, kiindulási érték a 40.571 és évenként 14.497-tel növekszik ez az érték. (jovedelem = 40.571 + kor*14.497)
+
+\
+\
+
+### Testmagasság szerinti jövedelem
+
+
+Megvizsgáljuk, hogy milyen hatással van a testmagasság a jövedelemre.
+
+```{r, echo=FALSE}
+linearmodel_jov_testm <- lm(jovedelem~testmagassag, data = JavitottValtozat)
+plot(testmagassag, jovedelem)
+abline(linearmodel_jov_testm)
+summary(linearmodel_jov_testm)
+```
+
+A p értéke nagyon nagy (p = 0.546), ezért kijelenthető, hogy a testmagasság nincs hatással a jövedelemre. (Ábrán is látható)
+
+\
+\
+
+### Becslések
+
+Mindegyik szakma és település esetén egy 178 cm magas 43 éves férfi jövedelmére adunk becslést.
+Előbb létrehozunk egy lineáris modellt a megfelelő szempontok szerint a meglévő adataink segítségével, majd konkrét értékekre ezt felhasználva a predict() fv. segítségével kapunk eredményt. 
+\
+
+**Szakmánként:**
+
+```{r, echo=FALSE}
+#Ferfiak szeparálása szakmánként
+dbE = 0
+dbA = 0
+dbP = 0
+
+korEpiteszmernok = array(1)
+varosEpiteszmernok = array(1)
+testmagassagEpiteszmernok = array(1)
+jovedelemEpiteszmernok = array(1)
+
+korAllatorvos = array(1)
+varosAllatorvos = array(1)
+testmagassagAllatorvos = array(1)
+jovedelemAllatorvos = array(1)
+
+korPincer = array(1)
+varosPincer = array(1)
+testmagassagPincer = array(1)
+jovedelemPincer = array(1)
+
+for(i in 1:rowNum){
+  if(JavitottValtozat[i,1] == "ferfi"){
+    if(JavitottValtozat[i,4] == "Epiteszmernok"){
+      korEpiteszmernok[dbE] = JavitottValtozat[i,2]
+      varosEpiteszmernok[dbE] = JavitottValtozat[i,3]
+      testmagassagEpiteszmernok[dbE] = JavitottValtozat[i,5]
+      jovedelemEpiteszmernok[dbE] = JavitottValtozat[i,6]
+
+      dbE = dbE + 1
+      
+    }else if(JavitottValtozat[i,4] == "Allatorvos"){
+      korAllatorvos[dbA] = JavitottValtozat[i,2]
+      varosAllatorvos[dbA] = JavitottValtozat[i,3]
+      testmagassagAllatorvos[dbA] = JavitottValtozat[i,5]
+      jovedelemAllatorvos[dbA] = JavitottValtozat[i,6]
+
+      dbA = dbA + 1
+    }else{
+      korPincer[dbP] = JavitottValtozat[i,2]
+      varosPincer[dbP] = JavitottValtozat[i,3]
+      testmagassagPincer[dbP] = JavitottValtozat[i,5]
+      jovedelemPincer[dbP] = JavitottValtozat[i,6]
+
+      dbP = dbP + 1
+    }
+
+  }
+  
+  
+dfEpiteszmernok <- data.frame(korEpiteszmernok, varosEpiteszmernok, testmagassagEpiteszmernok, jovedelemEpiteszmernok)  
+dfAllatorvos <- data.frame(korAllatorvos, varosAllatorvos, testmagassagAllatorvos, jovedelemAllatorvos)
+dfPincer <- data.frame(korPincer, varosPincer, testmagassagPincer, jovedelemPincer)
+
+}
+
+
+```
+
+
+```{r, echo=FALSE}
+
+lin_mod_E <- lm(jovedelemEpiteszmernok~korEpiteszmernok+testmagassagEpiteszmernok, data = dfEpiteszmernok )
+lin_mod_A <- lm(jovedelemAllatorvos~korAllatorvos+testmagassagAllatorvos, data = dfAllatorvos)
+lin_mod_P <- lm(jovedelemPincer~korPincer+testmagassagPincer, data = dfPincer)
+
+new_obs_E = data.frame(korEpiteszmernok = 43, testmagassagEpiteszmernok = 173)
+new_obs_A = data.frame(korAllatorvos = 43, testmagassagAllatorvos = 173)
+new_obs_P = data.frame(korPincer = 43, testmagassagPincer = 173)
+
+
+pred_E <- predict(lin_mod_E, newdata = new_obs_E)
+pred_A <- predict(lin_mod_A, newdata = new_obs_A)
+pred_P <- predict(lin_mod_P, newdata = new_obs_P)
+
+lin_mod_E
+cat("Egy 178 cm magas 43 éves férfi építészmérnök becsült jövedelme: ", pred_E)
+
+lin_mod_A
+cat("Egy 178 cm magas 43 éves férfi állatorvos becsült jövedelme: ", pred_A)
+
+lin_mod_P
+cat("Egy 178 cm magas 43 éves férfi pincér becsült jövedelme: ", pred_P)
+
+```
+
+Látható, hogy egyidős és azonos magasságú férfiak keresete között mekkora különbséget tud okozni a foglalkozás.
+Míg az építészmérnökök és állatorvosok közel azonos bért várhatnak, addig a pincérek megközelítőleg harmadennyit.
+
+\
+\
+
+**Városonként:**
+
+```{r, echo=FALSE}
+#Ferfiak szeparálása városonként
+dbBudapest = 0
+dbKiskunmajsa = 0
+dbTazlar = 0
+
+korBudapest = array(1)
+foglalkozasBudapest = array(1)
+testmagassagBudapest = array(1)
+jovedelemBudapest = array(1)
+
+korKiskunmajsa = array(1)
+foglalkozasKiskunmajsa = array(1)
+testmagassagKiskunmajsa = array(1)
+jovedelemKiskunmajsa = array(1)
+
+korTazlar = array(1)
+foglalkozasTazlar = array(1)
+testmagassagTazlar = array(1)
+jovedelemTazlar = array(1)
+
+for(i in 1:rowNum){
+  if(JavitottValtozat[i,1] == "ferfi"){
+    if(JavitottValtozat[i,3] == "Budapest"){
+      korBudapest[dbBudapest] = JavitottValtozat[i,2]
+      foglalkozasBudapest[dbBudapest] = JavitottValtozat[i,4]
+      testmagassagBudapest[dbBudapest] = JavitottValtozat[i,5]
+      jovedelemBudapest[dbBudapest] = JavitottValtozat[i,6]
+
+      dbBudapest = dbBudapest + 1
+      
+    }else if(JavitottValtozat[i,3] == "Kiskunmajsa"){
+      korKiskunmajsa[dbKiskunmajsa] = JavitottValtozat[i,2]
+      foglalkozasKiskunmajsa[dbKiskunmajsa] = JavitottValtozat[i,4]
+      testmagassagKiskunmajsa[dbKiskunmajsa] = JavitottValtozat[i,5]
+      jovedelemKiskunmajsa[dbKiskunmajsa] = JavitottValtozat[i,6]
+
+      dbKiskunmajsa = dbKiskunmajsa + 1
+    }else{
+      korTazlar[dbTazlar] = JavitottValtozat[i,2]
+      foglalkozasTazlar[dbTazlar] = JavitottValtozat[i,4]
+      testmagassagTazlar[dbTazlar] = JavitottValtozat[i,5]
+      jovedelemTazlar[dbTazlar] = JavitottValtozat[i,6]
+
+      dbTazlar = dbTazlar + 1
+    }
+
+  }
+  
+  
+dfBudapest <- data.frame(korBudapest, foglalkozasBudapest, testmagassagBudapest, jovedelemBudapest)  
+dfKiskunmajsa <- data.frame(korKiskunmajsa, foglalkozasKiskunmajsa, testmagassagKiskunmajsa, jovedelemKiskunmajsa)
+dfTazlar <- data.frame(korTazlar, foglalkozasTazlar, testmagassagTazlar, jovedelemTazlar)
+
+}
+
+
+```
+
+
+```{r, echo=FALSE}
+
+lin_mod_Budapest <- lm(jovedelemBudapest~korBudapest+testmagassagBudapest, data = dfBudapest )
+lin_mod_Kiskunmajsa <- lm(jovedelemKiskunmajsa~korKiskunmajsa+testmagassagKiskunmajsa, data = dfKiskunmajsa)
+lin_mod_Tazlar <- lm(jovedelemTazlar~korTazlar+testmagassagTazlar, data = dfTazlar)
+
+new_obs_Budapest = data.frame(korBudapest = 43, testmagassagBudapest = 173)
+new_obs_Kiskunmajsa = data.frame(korKiskunmajsa = 43, testmagassagKiskunmajsa = 173)
+new_obs_Tazlar = data.frame(korTazlar = 43, testmagassagTazlar = 173)
+
+
+pred_Budapest <- predict(lin_mod_Budapest, newdata = new_obs_Budapest)
+pred_Kiskunmajsa <- predict(lin_mod_Kiskunmajsa, newdata = new_obs_Kiskunmajsa)
+pred_Tazlar <- predict(lin_mod_Tazlar, newdata = new_obs_Tazlar)
+
+lin_mod_Budapest
+cat("Egy Budapest városban élő 178 cm magas 43 éves férfi becsült jövedelme: ", pred_Budapest)
+
+lin_mod_Kiskunmajsa
+cat("Egy Kiskunmajsa városban élő 178 cm magas 43 éves férfi becsült jövedelme: ", pred_Kiskunmajsa)
+
+lin_mod_Tazlar
+cat("Egy Tázlár városban élő 178 cm magas 43 éves férfi becsült jövedelme: ", pred_Tazlar)
+
+```
+
+Látható, hogy a város is fontos tényező, a Budapesten dolgozó férfiak jóval többet keresnek, mint Kiskunmajsán illetve Tázláron tevékenykedő társaik.
+
+Megjegyzendő továbbá, hogy a lineáris modellekre a summary()-t meghívva látjuk, hogy a magasság nem befolyásolja szignifikánsan a jövedelmet, tehát azt elhagyva pontosabb becsléseket tudnánk alkalkmazni.
+
+\
+\
+
+## ÖSSZEGZÉS
+
+**Az elemzésünket követően az alábbi következtetéseket tudjuk levonni:**
+
+* A felmérés során fele-fele arányban voltak a férfi-női válaszadók.
+* A válaszadók több, mint 2/3-a budapesti, a többiek 2:1 arányban Kiskunmajsán illetve Tázláron laknak. Látható a főváros mennyire népszerű.
+* Szakmákat tekintve építészmérnökök, állatorvosok és pincérek találhatók. Előbbiek száma valamivel kevesebb mint utóbbi kettőé.
+* Szakmákon belül a női-férfi arány egyenként is csakúgy , mint összességében közel azonos.
+* A férfiak átlagosan kicsivel ugyan, de idősebbek és magasabbak is. Náluk megfigyelhető, hogy a magasság normális eloszlású, míg a nőknél nem, így összességében sem mondható ez el.
+* Ami a jövedelmeket illeti azok nagyban függnek a foglalkozástól, várostól és kortól.
+A pincérek nagyon rosszul keresnek az építészmérnökök és állatorvosok mellett. A városokat tekintve Budapest felfelé emelkedik ki a másik két hellyel szemben. A dolgozók a kor előrehaladtával egyre jobb fizetésre számíthatnak.
+
+
+
