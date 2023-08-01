@@ -723,7 +723,8 @@ t.test(epiteszmernokokJov, pincerekJov, alternative =  "greater", var.equal = F 
 Mivel p nagyon kicsi (p < 2.2e-16), ezért a nullhipotézist elvetjük, tehát az első hipotézist elfogadjuk, miszerint az építészmérnökök többet keresnek, mint a pincérek.
 
 
-
+\
+\
 ```{r, echo=FALSE}
 cat('A korcsoportok meghatározásához a quantile()-t használom, hogy a csoportok létszámában ne legyen szignifikáns különbség.', '\ngroup1:  -', quantile(kor, 0.2), '\ngroup2: ', quantile(kor, 0.2), '-' , quantile(kor, 0.4), '\ngroup3: ', quantile(kor, 0.4),'-', quantile(kor, 0.6), '\ngroup4: ', quantile(kor, 0.6), '-',  quantile(kor, 0.8), '\ngroup5: ', quantile(kor, 0.8), '-', quantile(kor, 1))
 ```
