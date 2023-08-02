@@ -1,0 +1,11 @@
+f1:
+Legyen f(x) = cos(x), (-pi <= x <= pi).
+Interpoláljuk a függvényt a -pi, 0, pi alappontokon a tanult globális bázisban harmadfokú spline-nal, Hermite-féle peremfeltétellel:
+f'(-pi) = f'(pi) = 0.
+
+f2:
+A -2, -1, 0, 1 alappontokon a -1, 0, 1, 0 értéket felvevő függvényt közelítsük természetes peremfeltételű harmadfokú spline-nal.
+A spline-t a globális bázisban írjuk fel (egyoldali hatványfüggvényekkel).
+
+f3:
+Írja fel az f(x) = cos(pi/2*x) + cos(pi*x) - sin(pi*x) függvényt a -2, -1, 0, 1, 2 alappontokon interpoláló periodikus peremfeltételű harmadfokú spline-t! (Javasolt globális bázisban)
